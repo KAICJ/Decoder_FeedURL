@@ -26,9 +26,9 @@ jobs:
           git add data/lenovo_kr_mandatory_test.tsv
           if ! git diff --cached --quiet; then
             git commit -m "Update TSV file [skip ci]"
-            # Update remote URL to use PAT for authentication
-            git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/KAICJ/Decoder_FeedURL.git
-            git push origin HEAD:${{ github.ref }}
+            # Make sure this line is present and correct:
+          git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/KAICJ/Decoder_FeedURL.git
+          git push origin HEAD:${{ github.ref }}
           else
             echo "No changes to commit."
           fi

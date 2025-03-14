@@ -1,0 +1,35 @@
+name: Update TSV File
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # Runs every hour; adjust as needed
+  workflow_dispatch:      # Allows manual triggering
+
+jobs:
+  update-tsv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Fetch TSV File
+        run: |
+          # Create a folder for the data (if needed)
+          mkdir -p data
+          # Fetch the TSV using curl with credentials from secrets
+          curl -u "${{ secrets.LENOVO_URL_USERNAME }}:${{ secrets.LENOVO_URL_PASSWORD }}" "https://luezen5ed3.execute-api.eu-west-1.amazonaws.com/datasets-https/lenovo/301257/lenovo_kr_mandatory_test.tsv" -o data/lenovo_kr_mandatory_test.tsv
+
+      - name: Commit and Push Changes
+        run: |
+          # Configure git user
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # Stage the TSV file
+          git add data/lenovo_kr_mandatory_test.tsv
+          # Check if there are any changes
+          if ! git diff --cached --quiet; then
+            git commit -m "Update TSV file [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi
